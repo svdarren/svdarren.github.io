@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 
 PROJECT_NAME=${PWD##*/}
+LOCAL_PATH=$PWD
+CONTAINER_NAME="${PROJECT_NAME}_$(date +'%H%M%S')"
+CONTAINER_PATH=/workspace/$PROJECT_NAME
 
 docker run \
   -it \
-  --name "${PROJECT_NAME}_$(date +'%H%M%S')" \
-  -v $PROJECT_NAME:/workspace/$PROJECT_NAME \
+  --name $CONTAINER_NAME \
+  --volume $LOCAL_PATH:$CONTAINER_PATH \
+  --workdir $CONTAINER_PATH \
   gitpod/workspace-full
