@@ -2,12 +2,17 @@
 
 PROJECT_NAME=${PWD##*/}
 LOCAL_PATH=$PWD
-CONTAINER_NAME="${PROJECT_NAME}_$(date +'%H%M%S')"
+#CONTAINER_NAME="${PROJECT_NAME}_$(date +'%H%M%S')"
+CONTAINER_NAME="${PROJECT_NAME}"
 CONTAINER_PATH=/workspace/$PROJECT_NAME
 
 docker run \
   -it \
+  --rm \
   --name $CONTAINER_NAME \
-  --volume $LOCAL_PATH:$CONTAINER_PATH \
+  --volume $LOCAL_PATH:$CONTAINER_PATH:delegated \
   --workdir $CONTAINER_PATH \
+  --publish 80:80 \
+  --publish 4000:4000 \
+  --publish 8002:8002 \
   gitpod/workspace-full
