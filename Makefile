@@ -34,8 +34,13 @@ endif
 endif
 
 
-.PHONY: start
+.PHONY: start create install run clean
+
+ifeq ($(shell docker container inspect --format='{{.Config.Image}}' ${PROJECT_NAME}),)
 start: create install
+else
+start:
+endif
 	####################################
 	### STARTING EXISTING CONTAINER ###
 	####################################
@@ -44,9 +49,7 @@ start: create install
 		--interactive \
 		${PROJECT_NAME}
 
-.PHONY: create
 create:
-ifeq ($(shell docker container inspect --format='{{.Config.Image}}' ${PROJECT_NAME}),)
 	####################################
 	### CREATING NEW NAMED CONTAINER ###
 	####################################
@@ -54,11 +57,8 @@ ifeq ($(shell docker container inspect --format='{{.Config.Image}}' ${PROJECT_NA
 		--name=${PROJECT_NAME} \
 		${SHARED_START_PARAMS} \
 		${IMAGE}
-endif
 
-.PHONY: install
 install:
-ifeq ($(shell docker container inspect --format='{{.Config.Image}}' ${PROJECT_NAME}),)
 	####################################
 	####### INSTALL DEPENDANCIES #######
 	####################################
@@ -70,9 +70,7 @@ ifeq ($(shell docker container inspect --format='{{.Config.Image}}' ${PROJECT_NA
 		bash --login -c "${INSTALL_CMD}"
 	####################################
 	docker stop ${PROJECT_NAME}
-endif
 
-.PHONY: run
 run:
 	####################################
 	# RUNNING TEMPORARY NEW CONTAINER ##
@@ -82,7 +80,6 @@ run:
 		${SHARED_START_PARAMS} \
 		${IMAGE}
 
-.PHONY: clean
 clean:
 	####################################
 	### REMOVING EXISTING CONTAINER ####
